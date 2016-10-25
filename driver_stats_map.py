@@ -26,7 +26,6 @@ def main():
         pickup_time_hour, pickup_time_min=pickup_time.split(":",1)
         hack_year_day_hr = hack + " " + pickup_date + " " + pickup_time_hour
         #convert time string to datetime object
-       
         pickup_time=datetime.datetime.strptime(pickup_time, "%H:%M:%S")
         
         
