@@ -3,8 +3,8 @@
 ```{r}
 library("dplyr")
 
-rain <- read.csv("/Users/Yaqian/Dropbox/2016 Fall/Computational Social Science/Assignment 2/nyc_precipitation.csv")
-taxi <- read.table("/Users/Yaqian/Dropbox/2016 Fall/Computational Social Science/Assignment 2/drivers_by_hour.tsv",
+rain <- read.csv("nyc_precipitation.csv")
+taxi <- read.table("drivers_by_hour.tsv",
   sep="\t", header=FALSE)
 names(taxi) <- c('date', 'hour', 'drivers_onduty', 'drivers_occupied', 't_onduty', 't_occupied', 'n_pass', 'n_trip', 'n_mile', 'earnings') 
 
