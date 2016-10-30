@@ -1,50 +1,51 @@
 #!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
-
-
 import sys
+from itertools import groupby
+from operator import itemgetter
+from datetime import datetime, timedelta
 
-last_hack_pickup = None
-cur_pickup_datetime = "-"
-cur_payment_type = "-"
-cur_fare = "-"
-cur_surcharge = "-"
-cur_tax = "-"
-cur_tip = "-"
-cur_tolls = "-"
-cur_total_amount = "-"
+def read_mapper_output(file, separator = '\t'):
+	for line in file:
+		yield line.rstrip().split(separator, 1)
 
-for line in sys.stdin:
-    line = line.strip()
-    medallion, hack_pickup, vendor_id, rate_code,\
-    store_flag, dropoff_datetime,\
-    passenger_count, trip_time, trip_distance, pickup_longi,\
-    pickup_lati, dropoff_longi, dropoff_lati, payment_type,\
-    fare, surcharge, tax, tip, tolls, total_amount = line.split("\t")
+def main():
+	fmt = "%Y-%m-%d %H:%M:%S"
+	data = read_mapper_output(sys.stdin, separator = '\t')
+	for key, group in groupby(data, itemgetter(0)):
+		left = []
+		right = []
+		for key, value in group:
+			value = value.strip().split(",")
+			if len(value) == 14:
+				left = value
+				try:
+					pt = datetime.strptime(value[5], fmt)
+					dt = datetime.strptime(value[6], fmt)
+				except:
+					left = []
+			elif len(value) == 11:
+				right = value
+			else:
+				pass
 
-    if not last_hack_pickup or last_hack_pickup != hack_pickup: #if this is a new driver, remember the fare data
-        last_hack_pickup = hack_pickup
-        cur_payment_type = payment_type
-        cur_fare = fare
-        cur_surcharge = surcharge
-        cur_tax = tax
-        cur_tip = tip
-        cur_tolls = tolls
-        cur_total_amount = total_amount
-    elif hack_pickup == last_hack_pickup: # then add the fare data to the trip data
-        payment_type = cur_payment_type
-        fare= cur_fare
-        surcharge = cur_surcharge
-        tax = cur_tax
-        tip = cur_tip
-        tolls = cur_tolls
-        total_amount = cur_total_amount
-        print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (medallion, hack_pickup, vendor_id, rate_code,\
-                          store_flag, dropoff_datetime,\
-                          passenger_count, trip_time, trip_distance, pickup_longi,\
-                          pickup_lati, dropoff_longi, dropoff_lati, payment_type,\
-                          fare, surcharge, tax, tip, tolls, total_amount)
-        
-        
-        
+		try:
+			dis_lati = (float(left[11])-float(left[13]))*110.574/1.609
+			dis_longi = (float(left[11])-float(left[13]))*110.574*0.7578/1.609
+			if left == [] or right == []:
+				pass
+			elif float(left[10]) < -80 or float(left[10]) > -60\
+			or float(left[11]) < 30 or float(left[11]) > 50\
+			or float(left[12]) < -80 or float(left[12]) > -60\
+			or float(left[13]) < 30 or float(left[13]) > 50\
+			or (dis_lati**2+dis_longi**2) > 2 * (float(left[9])**2)\
+			or (dt - pt).total_seconds() > float(left[8]) * 1.5\
+			or (dt - pt).total_seconds() < float(left[8]) * 0.67:
+				pass
+			else:
+				print("\t".join(left + right[4:]))
+		except:
+			pass
+if __name__ == "__main__":
+    main()

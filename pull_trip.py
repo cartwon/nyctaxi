@@ -41,7 +41,7 @@ def main():
             pickup_longi = obs[11]
             dropoff_lati = obs[12]
             dropoff_longi = obs[13]
-            if "2013-01-01 01:" in pickup_datetime: #an hour of trip data
+            if "2013-01-01" in pickup_datetime: #an hour of trip data
                 print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s'\
             % (medallion, hack_license, vendor_id, rate_code,\
             store_flag, pickup_datetime, dropoff_datetime,\

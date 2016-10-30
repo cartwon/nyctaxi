@@ -36,7 +36,7 @@ def main():
             tip = obs[8]
             tolls = obs[9]
             total_amount = obs[10]
-            if "2013-01-01 01:" in pickup_datetime: #an hour of trip data
+            if "2013-01-01" in pickup_datetime: #an hour of trip data
                 print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s'\
             % (medallion, hack_license, vendor_id, \
             pickup_datetime, payment_type,\
